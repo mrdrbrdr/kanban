@@ -3,7 +3,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from './hooks/useTheme';
 import { AppShell } from './components/layout/AppShell';
 import { BoardView } from './components/board/BoardView';
-import { TreeView } from './components/tree/TreeView';
 import { ListView } from './components/list/ListView';
 
 const queryClient = new QueryClient({
@@ -26,7 +25,6 @@ export default function App() {
               <Route path="/boards" element={<BoardView />} />
               <Route path="/boards/:boardId" element={<BoardView />} />
               <Route path="/boards/:boardId/cards/:cardId" element={<ListView />} />
-              <Route path="/boards/:boardId/cards/:cardId/graph" element={<TreeView />} />
             </Route>
           </Routes>
         </BrowserRouter>

@@ -10,15 +10,19 @@ Built to be controllable from the command line via a simple REST API — the ide
 
 ![Board view](screenshots/01-board-view.png)
 
-### List view — nodes grouped by status, with dependencies inline
+Cards can be starred to mark them as priority — starred cards float to the top of their column and get a faint gold border + glow.
+
+### Card view — list (left), dependency graph (right), node detail (far right)
 
 ![List view](screenshots/02-card-list-view.png)
 
-### Canvas view — the full dependency graph
+The list groups nodes by status with dependencies inline. On wide screens (≥1280px) the dependency graph is rendered in the same view, occupying the right two-thirds. Selecting a node opens its detail panel on the far right; selection is synced between the list and the graph.
+
+### Dependency graph close-up
 
 ![Canvas view](screenshots/03-canvas-view.png)
 
-Node colors: green = done, orange = in progress, grey = locked (waiting on dependencies). Arrows show what blocks what.
+Node colors: green = done, orange = in progress, grey = locked (waiting on dependencies). Arrows show what blocks what. Layout is computed by ELK (layered algorithm) and re-runs when nodes/edges change.
 
 ## Stack
 
@@ -37,7 +41,7 @@ npm run dev
 - UI: <http://localhost:5174>
 - API: <http://localhost:3001>
 
-A SQLite file (`kanban.db`) is created on first run in the repo root.
+A SQLite file (`kanban.db`) is created on first run in the repo root. It's gitignored — your data stays local. Per-card working notes can be written to `docs/<card-id>.md` (also gitignored) via the card docs API or by hand.
 
 ## REST API
 
@@ -54,9 +58,11 @@ All create endpoints expect a client-generated 4-char alphanumeric `id`.
 
 Columns: `backlog`, `todo`, `active`, `done`.
 
+Cards have a `priority` flag (`0` or `1`). Priority cards sort to the top of their column in the UI.
+
 - `GET /api/boards/:boardId/cards`
 - `POST /api/boards/:boardId/cards` — `{ id, title, column? }`
-- `PATCH /api/cards/:id` — move column, rename, etc.
+- `PATCH /api/cards/:id` — move column, rename, toggle priority, etc.
 - `DELETE /api/cards/:id`
 
 ### Nodes

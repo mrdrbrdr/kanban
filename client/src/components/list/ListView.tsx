@@ -157,15 +157,6 @@ export function ListView() {
             &larr; Back
           </button>
           <button
-            onClick={() => navigate(`/boards/${boardId}/cards/${cardId}/graph`)}
-            className="px-2.5 py-1 text-sm text-gray-500 dark:text-nord-muted hover:text-gray-700 dark:hover:text-nord-text hover:bg-gray-100 dark:hover:bg-nord-hover rounded transition-colors"
-            title="View dependency graph"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M3 20.25h18M3.75 3v16.5h16.5" />
-            </svg>
-          </button>
-          <button
             onClick={() => setShowDoc(true)}
             className="px-2.5 py-1 text-sm text-gray-500 dark:text-nord-muted hover:text-gray-700 dark:hover:text-nord-text hover:bg-gray-100 dark:hover:bg-nord-hover rounded transition-colors"
             title="Card documentation"
@@ -204,9 +195,9 @@ export function ListView() {
         </div>
       </div>
 
-      {/* Body: list (left) + embedded graph (right, wide screens only) */}
+      {/* Body: list (1/3) + embedded graph (2/3, wide screens) + node detail (right) */}
       <div className="flex flex-1 overflow-hidden">
-        <div className="flex-1 overflow-y-auto px-5 py-4">
+        <div className="basis-1/3 grow shrink overflow-y-auto px-5 py-4 xl:basis-1/3 xl:grow-0">
           {nodes.length === 0 ? (
             <div className="text-center py-16 text-gray-400 dark:text-nord-muted">
               <p className="text-sm">No tasks yet</p>
@@ -249,7 +240,7 @@ export function ListView() {
         </div>
 
         {cardId && nodes.length > 0 && (
-          <div className="hidden xl:block flex-1 border-l border-gray-200 dark:border-nord-border bg-white dark:bg-nord-surface">
+          <div className="hidden xl:block basis-2/3 grow-0 shrink-0 border-l border-gray-200 dark:border-nord-border bg-white dark:bg-nord-surface">
             <GraphPanel
               cardId={cardId}
               selectedNodeId={selectedNodeId}
@@ -257,21 +248,20 @@ export function ListView() {
             />
           </div>
         )}
-      </div>
 
-      {/* Node detail sidebar */}
-      {selectedNode && (
-        <NodeDetail
-          node={selectedNode}
-          cardId={cardId!}
-          onClose={() => setSelectedNodeId(null)}
-          onDelete={() => handleDeleteNode(selectedNode.id)}
-          allNodes={nodes}
-          dependencies={deps}
-          onAddDependent={handleAddDependent}
-          onSelectNode={handleDepClick}
-        />
-      )}
+        {selectedNode && (
+          <NodeDetail
+            node={selectedNode}
+            cardId={cardId!}
+            onClose={() => setSelectedNodeId(null)}
+            onDelete={() => handleDeleteNode(selectedNode.id)}
+            allNodes={nodes}
+            dependencies={deps}
+            onAddDependent={handleAddDependent}
+            onSelectNode={handleDepClick}
+          />
+        )}
+      </div>
 
       {showDoc && card && (
         <CardDocModal
