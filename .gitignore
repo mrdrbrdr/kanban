@@ -1,0 +1,14 @@
+node_modules/
+dist/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.bak
+.env
+.vite/
+.playwright-mcp/
+tree-*.png
+
+# Personal working notes per card (not for public repo)
+docs/

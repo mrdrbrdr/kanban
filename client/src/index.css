@@ -1,0 +1,55 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-nord-bg: #2e3440;
+  --color-nord-surface: #3b4252;
+  --color-nord-hover: #434c5e;
+  --color-nord-border: #4c566a;
+  --color-nord-muted: #616e88;
+  --color-nord-text: #d8dee9;
+  --color-nord-text-bright: #eceff4;
+  --color-nord-accent: #81a1c1;
+  --color-nord-cyan: #88c0d0;
+  --color-nord-red: #bf616a;
+  --color-nord-green: #a3be8c;
+  --color-nord-green-tint: color-mix(in srgb, #a3be8c 15%, #2e3440);
+  --color-nord-yellow: #ebcb8b;
+  --color-nord-yellow-tint: color-mix(in srgb, #ebcb8b 15%, #2e3440);
+  --color-nord-purple: #b48ead;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  height: 100vh;
+  display: flex;
+}
+
+.dark .prose {
+  --tw-prose-body: #d8dee9;
+  --tw-prose-headings: #eceff4;
+  --tw-prose-links: #81a1c1;
+  --tw-prose-bold: #eceff4;
+  --tw-prose-code: #88c0d0;
+  --tw-prose-pre-code: #d8dee9;
+  --tw-prose-pre-bg: #3b4252;
+  --tw-prose-th-borders: #4c566a;
+  --tw-prose-td-borders: #4c566a;
+  --tw-prose-hr: #4c566a;
+  --tw-prose-quotes: #d8dee9;
+  --tw-prose-quote-borders: #81a1c1;
+  --tw-prose-counters: #81a1c1;
+  --tw-prose-bullets: #81a1c1;
+}
+
+@keyframes elkEdgeFlow {
+  from { stroke-dashoffset: 10; }
+  to { stroke-dashoffset: 0; }
+}
