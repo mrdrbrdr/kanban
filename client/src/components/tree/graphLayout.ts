@@ -35,7 +35,7 @@ export async function getLayoutedElements(
       'elk.algorithm': 'layered',
       'elk.direction': 'DOWN',
       'elk.spacing.nodeNode': '30',
-      'elk.layered.spacing.nodeNodeBetweenLayers': '70',
+      'elk.layered.spacing.nodeNodeBetweenLayers': '50',
       'elk.layered.spacing.edgeNodeBetweenLayers': '50',
       'elk.layered.spacing.edgeEdgeBetweenLayers': '15',
       'elk.spacing.edgeNode': '40',
