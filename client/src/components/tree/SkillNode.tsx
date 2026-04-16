@@ -1,9 +1,8 @@
 import { Handle, Position, type NodeProps } from '@xyflow/react';
-import type { Assignee, NodeStatus, TreeNode } from '@kanban/shared';
+import type { NodeStatus, TreeNode } from '@kanban/shared';
 import { useShiftHoverPopup } from '../../hooks/useShiftHoverPopup';
 import { NodePopup } from '../NodePopup';
-
-const ASSIGNEE_LABEL: Record<Assignee, string> = { ozan: '\u{1F464}', claude: '\u{1F916}' };
+import { AssigneeIcon } from '../AssigneeIcon';
 
 interface StatusStyle {
   border: string;
@@ -69,11 +68,9 @@ export function SkillNode({ data }: NodeProps) {
       <span className={`absolute -top-4 left-2 text-sm font-mono text-gray-500 dark:text-nord-muted ${config.bg} border-2 ${config.border} px-1.5 py-0 rounded-t select-all leading-relaxed border-b-0`}>{node.id}</span>
       {node.assignee && (
         <span
-          className={`absolute -top-4 right-2 text-xs font-medium ${config.bg} ${config.border} border-2 px-1.5 py-0 rounded-t leading-relaxed border-b-0 ${
-            node.assignee === 'claude' ? 'text-red-700 dark:text-nord-red' : 'text-gray-500 dark:text-nord-muted'
-          }`}
+          className={`absolute -top-4 right-2 flex items-center ${config.bg} ${config.border} border-2 px-1.5 py-0.5 rounded-t border-b-0 text-gray-500 dark:text-nord-muted`}
         >
-          {ASSIGNEE_LABEL[node.assignee]}
+          <AssigneeIcon assignee={node.assignee} />
         </span>
       )}
       <Handle type="target" position={Position.Top} className="!bg-gray-400 dark:!bg-nord-muted !w-2 !h-2" />

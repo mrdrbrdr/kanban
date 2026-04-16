@@ -6,6 +6,7 @@ import { useUpdateNode, useAddDependency, useRemoveDependency } from '../../hook
 import { useResizable } from '../../hooks/useResizable';
 import { shortId } from '../../lib/shortId';
 import { STATUS_ICON } from '../../lib/statusIcons';
+import { AssigneeIcon } from '../AssigneeIcon';
 
 interface NodeDetailProps {
   node: TreeNode;
@@ -105,8 +106,8 @@ interface AssigneeOption {
 
 const ASSIGNEE_OPTIONS: AssigneeOption[] = [
   { value: null,     label: 'None',   activeClass: 'bg-gray-200 text-gray-600 dark:bg-nord-hover dark:text-nord-text font-medium',   hoverClass: 'hover:bg-gray-100 dark:hover:bg-nord-hover/60' },
-  { value: 'ozan',   label: '\u{1F464}', activeClass: 'bg-blue-100 text-blue-700 dark:bg-nord-accent/20 dark:text-nord-accent font-medium', hoverClass: 'hover:bg-blue-50 dark:hover:bg-nord-accent/10' },
-  { value: 'claude', label: '\u{1F916}', activeClass: 'bg-blue-100 text-blue-700 dark:bg-nord-accent/20 dark:text-nord-accent font-medium', hoverClass: 'hover:bg-blue-50 dark:hover:bg-nord-accent/10' },
+  { value: 'ozan',   label: 'Ozan',   activeClass: 'bg-blue-100 text-blue-700 dark:bg-nord-accent/20 dark:text-nord-accent font-medium', hoverClass: 'hover:bg-blue-50 dark:hover:bg-nord-accent/10' },
+  { value: 'claude', label: 'Claude', activeClass: 'bg-blue-100 text-blue-700 dark:bg-nord-accent/20 dark:text-nord-accent font-medium', hoverClass: 'hover:bg-blue-50 dark:hover:bg-nord-accent/10' },
 ];
 
 const STATUS_OPTIONS: StatusOption[] = [
@@ -301,10 +302,11 @@ export function NodeDetail({ node, cardId, onClose, onDelete, allNodes, dependen
                       ? { assignee: 'claude' }
                       : { assignee: value, assignee_session_id: null, assignee_cwd: null }
                   )}
-                  className={`flex-1 py-1.5 rounded text-sm transition-colors ${
+                  className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded text-sm transition-colors ${
                     isActive ? activeClass : `bg-gray-50 dark:bg-nord-bg text-gray-400 dark:text-nord-muted ${hoverClass}`
                   }`}
                 >
+                  {value && <AssigneeIcon assignee={value} />}
                   {label}
                 </button>
               );
