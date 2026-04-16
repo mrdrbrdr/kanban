@@ -3,7 +3,7 @@ import type { Assignee, NodeStatus, TreeNode } from '@kanban/shared';
 import { useShiftHoverPopup } from '../../hooks/useShiftHoverPopup';
 import { NodePopup } from '../NodePopup';
 
-const ASSIGNEE_LABEL: Record<Assignee, string> = { ozan: 'Ozan', claude: 'Claude' };
+const ASSIGNEE_LABEL: Record<Assignee, string> = { ozan: '\u{1F464}', claude: '\u{1F916}' };
 
 interface StatusStyle {
   border: string;

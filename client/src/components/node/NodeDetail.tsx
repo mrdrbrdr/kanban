@@ -105,8 +105,8 @@ interface AssigneeOption {
 
 const ASSIGNEE_OPTIONS: AssigneeOption[] = [
   { value: null,     label: 'None',   activeClass: 'bg-gray-200 text-gray-600 dark:bg-nord-hover dark:text-nord-text font-medium',   hoverClass: 'hover:bg-gray-100 dark:hover:bg-nord-hover/60' },
-  { value: 'ozan',   label: 'Ozan',   activeClass: 'bg-blue-100 text-blue-700 dark:bg-nord-accent/20 dark:text-nord-accent font-medium', hoverClass: 'hover:bg-blue-50 dark:hover:bg-nord-accent/10' },
-  { value: 'claude', label: 'Claude', activeClass: 'bg-blue-100 text-blue-700 dark:bg-nord-accent/20 dark:text-nord-accent font-medium', hoverClass: 'hover:bg-blue-50 dark:hover:bg-nord-accent/10' },
+  { value: 'ozan',   label: '\u{1F464}', activeClass: 'bg-blue-100 text-blue-700 dark:bg-nord-accent/20 dark:text-nord-accent font-medium', hoverClass: 'hover:bg-blue-50 dark:hover:bg-nord-accent/10' },
+  { value: 'claude', label: '\u{1F916}', activeClass: 'bg-blue-100 text-blue-700 dark:bg-nord-accent/20 dark:text-nord-accent font-medium', hoverClass: 'hover:bg-blue-50 dark:hover:bg-nord-accent/10' },
 ];
 
 const STATUS_OPTIONS: StatusOption[] = [
