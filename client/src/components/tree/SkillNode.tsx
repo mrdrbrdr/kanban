@@ -69,11 +69,9 @@ export function SkillNode({ data }: NodeProps) {
       <span className={`absolute -top-4 left-2 text-sm font-mono text-gray-500 dark:text-nord-muted ${config.bg} border-2 ${config.border} px-1.5 py-0 rounded-t select-all leading-relaxed border-b-0`}>{node.id}</span>
       {node.assignee && (
         <span
-          className={
-            node.assignee === 'claude'
-              ? 'absolute -top-4 right-2 text-xs font-medium text-red-700 dark:text-nord-red bg-red-50 dark:bg-nord-red-tint border-red-300 dark:border-nord-red border-2 px-1.5 py-0 rounded-t leading-relaxed border-b-0'
-              : `absolute -top-4 right-2 text-xs font-medium ${config.text} ${config.bg} ${config.border} border-2 px-1.5 py-0 rounded-t leading-relaxed border-b-0`
-          }
+          className={`absolute -top-4 right-2 text-xs font-medium ${config.bg} ${config.border} border-2 px-1.5 py-0 rounded-t leading-relaxed border-b-0 ${
+            node.assignee === 'claude' ? 'text-red-700 dark:text-nord-red' : config.text
+          }`}
         >
           {ASSIGNEE_LABEL[node.assignee]}
         </span>
