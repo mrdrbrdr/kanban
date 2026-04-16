@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { useCardDoc, useUpdateCardDoc } from '../../hooks/useCardDoc';
+import { useResizable } from '../../hooks/useResizable';
 
 const TEXT_SIZES = ['prose-sm text-[11px]', 'prose-base', 'prose-lg'] as const;
 const STORAGE_KEY = 'kanban-doc-text-size';
@@ -55,6 +56,13 @@ export function CardDocModal({ cardId, cardTitle, onClose }: CardDocModalProps) 
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const { width, startDrag } = useResizable({
+    storageKey: 'kanban-doc-width',
+    defaultWidth: 800,
+    min: 520,
+    max: 1600,
+    edge: 'right',
+  });
 
   function handleSizeChange(i: number): void {
     setSizeIdx(i);
@@ -99,7 +107,15 @@ export function CardDocModal({ cardId, cardTitle, onClose }: CardDocModalProps) 
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="bg-white dark:bg-nord-surface rounded-lg shadow-2xl w-[800px] max-w-[90vw] max-h-[90vh] flex flex-col">
+      <div
+        className="relative bg-white dark:bg-nord-surface rounded-lg shadow-2xl max-w-[95vw] max-h-[90vh] flex flex-col"
+        style={{ width: `${width}px` }}
+      >
+        <div
+          onMouseDown={startDrag}
+          className="absolute right-0 top-0 bottom-0 w-1.5 cursor-ew-resize hover:bg-blue-400 dark:hover:bg-nord-accent transition-colors translate-x-1/2 rounded-r-lg z-10"
+          title="Drag to resize"
+        />
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-nord-border">
           <div>
             <h2 className="text-lg font-semibold text-gray-800 dark:text-nord-text-bright">{cardTitle}</h2>

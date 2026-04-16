@@ -1,6 +1,9 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
+import Markdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import type { NodeStatus, TreeNode, NodeDependency, UpdateNodePayload } from '@kanban/shared';
 import { useUpdateNode, useAddDependency, useRemoveDependency } from '../../hooks/useNodes';
+import { useResizable } from '../../hooks/useResizable';
 import { shortId } from '../../lib/shortId';
 import { STATUS_ICON } from '../../lib/statusIcons';
 
@@ -15,32 +18,69 @@ interface NodeDetailProps {
   onSelectNode?: (nodeId: string) => void;
 }
 
-interface AutoTextareaProps {
+interface MarkdownFieldProps {
   value: string;
-  onChange: (v: string) => void;
-  onBlur: () => void;
+  onSave: (v: string) => void;
   placeholder?: string;
 }
 
-function AutoTextarea({ value, onChange, onBlur, placeholder }: AutoTextareaProps) {
-  const ref = useRef<HTMLTextAreaElement>(null);
+function MarkdownField({ value, onSave, placeholder }: MarkdownFieldProps) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [draft, setDraft] = useState(value);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    if (!ref.current) return;
-    ref.current.style.height = 'auto';
-    ref.current.style.height = ref.current.scrollHeight + 'px';
+    setDraft(value);
   }, [value]);
 
+  useEffect(() => {
+    if (!isEditing) return;
+    const el = textareaRef.current;
+    if (!el) return;
+    el.focus();
+    el.setSelectionRange(el.value.length, el.value.length);
+    el.style.height = 'auto';
+    el.style.height = el.scrollHeight + 'px';
+  }, [isEditing]);
+
+  function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>): void {
+    setDraft(e.target.value);
+    e.target.style.height = 'auto';
+    e.target.style.height = e.target.scrollHeight + 'px';
+  }
+
+  function handleBlur(): void {
+    if (draft !== value) onSave(draft);
+    setIsEditing(false);
+  }
+
+  if (isEditing) {
+    return (
+      <textarea
+        ref={textareaRef}
+        value={draft}
+        onChange={handleChange}
+        onBlur={handleBlur}
+        rows={1}
+        className="w-full px-2.5 py-1.5 text-sm border border-gray-200 dark:border-nord-border rounded bg-white dark:bg-nord-bg focus:outline-none focus:border-blue-400 dark:focus:border-nord-accent resize-none overflow-hidden font-mono"
+        placeholder={placeholder}
+      />
+    );
+  }
+
   return (
-    <textarea
-      ref={ref}
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      onBlur={onBlur}
-      rows={1}
-      className="w-full px-2.5 py-1.5 text-sm border border-gray-200 dark:border-nord-border rounded bg-white dark:bg-nord-bg focus:outline-none focus:border-blue-400 dark:focus:border-nord-accent resize-none overflow-hidden"
-      placeholder={placeholder}
-    />
+    <div
+      onClick={() => setIsEditing(true)}
+      className="px-2.5 py-1.5 text-sm border border-transparent hover:border-gray-200 dark:hover:border-nord-border rounded cursor-text min-h-[2rem]"
+    >
+      {value ? (
+        <div className="prose prose-sm dark:prose-invert max-w-none prose-p:my-2 prose-headings:my-2 prose-ul:my-2 prose-ol:my-2 prose-li:my-0.5 prose-pre:my-2 prose-code:text-xs">
+          <Markdown remarkPlugins={[remarkGfm]}>{value}</Markdown>
+        </div>
+      ) : (
+        <span className="text-gray-400 dark:text-nord-muted italic">{placeholder}</span>
+      )}
+    </div>
   );
 }
 
@@ -63,16 +103,20 @@ export function NodeDetail({ node, cardId, onClose, onDelete, allNodes, dependen
   const addDep = useAddDependency(cardId);
   const removeDep = useRemoveDependency(cardId);
   const [title, setTitle] = useState(node.title);
-  const [description, setDescription] = useState(node.description);
-  const [notes, setNotes] = useState(node.notes);
   const [deadline, setDeadline] = useState(node.deadline || '');
   const [depSearch, setDepSearch] = useState('');
   const [showDepDropdown, setShowDepDropdown] = useState(false);
 
+  const { width, startDrag } = useResizable({
+    storageKey: 'kanban-node-detail-width',
+    defaultWidth: 320,
+    min: 260,
+    max: 720,
+    edge: 'left',
+  });
+
   useEffect(() => {
     setTitle(node.title);
-    setDescription(node.description);
-    setNotes(node.notes);
     setDeadline(node.deadline || '');
     setDepSearch('');
     setShowDepDropdown(false);
@@ -150,7 +194,16 @@ export function NodeDetail({ node, cardId, onClose, onDelete, allNodes, dependen
   const hasDeps = allNodes && dependencies;
 
   return (
-    <div className="w-80 border-l border-gray-200 dark:border-nord-border bg-white dark:bg-nord-surface p-4 overflow-y-auto flex flex-col">
+    <div
+      className="relative border-l border-gray-200 dark:border-nord-border bg-white dark:bg-nord-surface p-4 overflow-y-auto flex flex-col shrink-0"
+      style={{ width: `${width}px` }}
+    >
+      <div
+        onMouseDown={startDrag}
+        className="absolute left-0 top-0 bottom-0 w-1 cursor-ew-resize hover:bg-blue-400 dark:hover:bg-nord-accent transition-colors -translate-x-1/2 z-10"
+        title="Drag to resize"
+      />
+
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-semibold text-gray-500 dark:text-nord-muted uppercase tracking-wider">
           Node detail
@@ -220,20 +273,20 @@ export function NodeDetail({ node, cardId, onClose, onDelete, allNodes, dependen
 
         <div>
           <label className="block text-xs font-medium text-gray-500 dark:text-nord-muted mb-1">Description</label>
-          <AutoTextarea
-            value={description}
-            onChange={setDescription}
-            onBlur={() => saveIfChanged('description', description)}
+          <MarkdownField
+            key={`desc-${node.id}`}
+            value={node.description}
+            onSave={(v) => saveIfChanged('description', v)}
             placeholder="What needs to be done..."
           />
         </div>
 
         <div>
           <label className="block text-xs font-medium text-gray-500 dark:text-nord-muted mb-1">Notes</label>
-          <AutoTextarea
-            value={notes}
-            onChange={setNotes}
-            onBlur={() => saveIfChanged('notes', notes)}
+          <MarkdownField
+            key={`notes-${node.id}`}
+            value={node.notes}
+            onSave={(v) => saveIfChanged('notes', v)}
             placeholder="Additional notes..."
           />
         </div>
