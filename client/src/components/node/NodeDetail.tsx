@@ -24,14 +24,15 @@ interface MarkdownFieldProps {
   placeholder?: string;
 }
 
+function autoSize(el: HTMLTextAreaElement): void {
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
+}
+
 function MarkdownField({ value, onSave, placeholder }: MarkdownFieldProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState(value);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-  useEffect(() => {
-    setDraft(value);
-  }, [value]);
 
   useEffect(() => {
     if (!isEditing) return;
@@ -39,14 +40,17 @@ function MarkdownField({ value, onSave, placeholder }: MarkdownFieldProps) {
     if (!el) return;
     el.focus();
     el.setSelectionRange(el.value.length, el.value.length);
-    el.style.height = 'auto';
-    el.style.height = el.scrollHeight + 'px';
+    autoSize(el);
   }, [isEditing]);
+
+  function startEditing(): void {
+    setDraft(value);
+    setIsEditing(true);
+  }
 
   function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>): void {
     setDraft(e.target.value);
-    e.target.style.height = 'auto';
-    e.target.style.height = e.target.scrollHeight + 'px';
+    autoSize(e.target);
   }
 
   function handleBlur(): void {
@@ -70,7 +74,7 @@ function MarkdownField({ value, onSave, placeholder }: MarkdownFieldProps) {
 
   return (
     <div
-      onClick={() => setIsEditing(true)}
+      onClick={startEditing}
       className="px-2.5 py-1.5 text-sm border border-transparent hover:border-gray-200 dark:hover:border-nord-border rounded cursor-text min-h-[2rem]"
     >
       {value ? (
