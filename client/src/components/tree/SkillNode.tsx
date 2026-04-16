@@ -70,7 +70,7 @@ export function SkillNode({ data }: NodeProps) {
       {node.assignee && (
         <span
           className={`absolute -top-4 right-2 text-xs font-medium ${config.bg} ${config.border} border-2 px-1.5 py-0 rounded-t leading-relaxed border-b-0 ${
-            node.assignee === 'claude' ? 'text-red-700 dark:text-nord-red' : config.text
+            node.assignee === 'claude' ? 'text-red-700 dark:text-nord-red' : 'text-gray-500 dark:text-nord-muted'
           }`}
         >
           {ASSIGNEE_LABEL[node.assignee]}
