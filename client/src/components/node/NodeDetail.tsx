@@ -195,7 +195,7 @@ export function NodeDetail({ node, cardId, onClose, onDelete, allNodes, dependen
 
   return (
     <div
-      className="relative border-l border-gray-200 dark:border-nord-border bg-white dark:bg-nord-surface p-4 overflow-y-auto flex flex-col shrink-0"
+      className="absolute right-0 top-0 bottom-0 z-20 border-l border-gray-200 dark:border-nord-border bg-white dark:bg-nord-surface p-4 overflow-y-auto flex flex-col shadow-xl dark:shadow-black/40"
       style={{ width: `${width}px` }}
     >
       <div

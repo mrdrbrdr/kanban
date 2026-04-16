@@ -195,8 +195,8 @@ export function ListView() {
         </div>
       </div>
 
-      {/* Body: list (1/3) + embedded graph (2/3, wide screens) + node detail (right) */}
-      <div className="flex flex-1 overflow-hidden">
+      {/* Body: list (1/3) + embedded graph (2/3, wide screens) + node detail (right, overlay) */}
+      <div className="relative flex flex-1 overflow-hidden">
         <div className="basis-1/3 grow shrink overflow-y-auto px-5 py-4 xl:basis-1/3 xl:grow-0">
           {nodes.length === 0 ? (
             <div className="text-center py-16 text-gray-400 dark:text-nord-muted">
