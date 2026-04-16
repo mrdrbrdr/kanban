@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import type { NodeStatus, TreeNode, NodeDependency, UpdateNodePayload } from '@kanban/shared';
+import type { Assignee, NodeStatus, TreeNode, NodeDependency, UpdateNodePayload } from '@kanban/shared';
 import { useUpdateNode, useAddDependency, useRemoveDependency } from '../../hooks/useNodes';
 import { useResizable } from '../../hooks/useResizable';
 import { shortId } from '../../lib/shortId';
@@ -95,6 +95,19 @@ interface StatusOption {
   activeClass: string;
   hoverClass: string;
 }
+
+interface AssigneeOption {
+  value: Assignee | null;
+  label: string;
+  activeClass: string;
+  hoverClass: string;
+}
+
+const ASSIGNEE_OPTIONS: AssigneeOption[] = [
+  { value: null,     label: 'None',   activeClass: 'bg-gray-200 text-gray-600 dark:bg-nord-hover dark:text-nord-text font-medium',   hoverClass: 'hover:bg-gray-100 dark:hover:bg-nord-hover/60' },
+  { value: 'ozan',   label: 'Ozan',   activeClass: 'bg-blue-100 text-blue-700 dark:bg-nord-accent/20 dark:text-nord-accent font-medium', hoverClass: 'hover:bg-blue-50 dark:hover:bg-nord-accent/10' },
+  { value: 'claude', label: 'Claude', activeClass: 'bg-red-100 text-red-700 dark:bg-nord-red/20 dark:text-nord-red font-medium',       hoverClass: 'hover:bg-red-50 dark:hover:bg-nord-red/10' },
+];
 
 const STATUS_OPTIONS: StatusOption[] = [
   { status: 'unlocked', icon: '\u25CB', label: 'Ready',  activeClass: 'bg-blue-100 text-blue-700 dark:bg-nord-accent/20 dark:text-nord-accent font-medium',   hoverClass: 'hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-nord-accent/10 dark:hover:text-nord-accent' },
@@ -275,28 +288,45 @@ export function NodeDetail({ node, cardId, onClose, onDelete, allNodes, dependen
           />
         </div>
 
-        {node.assignee && (
-          <div>
-            <label className="block text-xs font-medium text-gray-500 dark:text-nord-muted mb-1">Assigned to</label>
-            <div className="text-sm text-gray-800 dark:text-nord-text capitalize">{node.assignee}</div>
-            {node.assignee === 'claude' && (
-              <div className="mt-1.5 space-y-1 text-xs">
-                {node.assignee_session_id && (
-                  <div className="flex gap-1.5">
-                    <span className="text-gray-400 dark:text-nord-muted shrink-0">Session:</span>
-                    <code className="font-mono text-gray-600 dark:text-nord-cyan break-all select-all">{node.assignee_session_id}</code>
-                  </div>
-                )}
-                {node.assignee_cwd && (
-                  <div className="flex gap-1.5">
-                    <span className="text-gray-400 dark:text-nord-muted shrink-0">CWD:</span>
-                    <code className="font-mono text-gray-600 dark:text-nord-cyan break-all select-all">{node.assignee_cwd}</code>
-                  </div>
-                )}
-              </div>
-            )}
+        <div>
+          <label className="block text-xs font-medium text-gray-500 dark:text-nord-muted mb-1">Assigned to</label>
+          <div className="flex gap-1">
+            {ASSIGNEE_OPTIONS.map(({ value, label, activeClass, hoverClass }) => {
+              const isActive = (node.assignee ?? null) === value;
+              return (
+                <button
+                  key={label}
+                  onClick={() => save(
+                    value === 'claude'
+                      ? { assignee: 'claude' }
+                      : { assignee: value, assignee_session_id: null, assignee_cwd: null }
+                  )}
+                  className={`flex-1 py-1.5 rounded text-sm transition-colors ${
+                    isActive ? activeClass : `bg-gray-50 dark:bg-nord-bg text-gray-400 dark:text-nord-muted ${hoverClass}`
+                  }`}
+                >
+                  {label}
+                </button>
+              );
+            })}
           </div>
-        )}
+          {node.assignee === 'claude' && (node.assignee_session_id || node.assignee_cwd) && (
+            <div className="mt-1.5 space-y-1 text-xs">
+              {node.assignee_session_id && (
+                <div className="flex gap-1.5">
+                  <span className="text-gray-400 dark:text-nord-muted shrink-0">Session:</span>
+                  <code className="font-mono text-gray-600 dark:text-nord-cyan break-all select-all">{node.assignee_session_id}</code>
+                </div>
+              )}
+              {node.assignee_cwd && (
+                <div className="flex gap-1.5">
+                  <span className="text-gray-400 dark:text-nord-muted shrink-0">CWD:</span>
+                  <code className="font-mono text-gray-600 dark:text-nord-cyan break-all select-all">{node.assignee_cwd}</code>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
 
         <div>
           <label className="block text-xs font-medium text-gray-500 dark:text-nord-muted mb-1">Description</label>

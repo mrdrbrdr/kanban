@@ -13,6 +13,7 @@
   --color-nord-accent: #81a1c1;
   --color-nord-cyan: #88c0d0;
   --color-nord-red: #bf616a;
+  --color-nord-red-tint: color-mix(in srgb, #bf616a 15%, #2e3440);
   --color-nord-green: #a3be8c;
   --color-nord-green-tint: color-mix(in srgb, #a3be8c 15%, #2e3440);
   --color-nord-yellow: #ebcb8b;

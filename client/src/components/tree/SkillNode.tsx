@@ -4,10 +4,6 @@ import { useShiftHoverPopup } from '../../hooks/useShiftHoverPopup';
 import { NodePopup } from '../NodePopup';
 
 const ASSIGNEE_LABEL: Record<Assignee, string> = { ozan: 'Ozan', claude: 'Claude' };
-const ASSIGNEE_STYLE: Record<Assignee, string> = {
-  ozan: 'text-purple-700 dark:text-nord-purple bg-purple-50 dark:bg-nord-purple-tint border-purple-300 dark:border-nord-purple',
-  claude: 'text-orange-700 dark:text-nord-orange bg-orange-50 dark:bg-nord-orange-tint border-orange-300 dark:border-nord-orange',
-};
 
 interface StatusStyle {
   border: string;
@@ -72,7 +68,13 @@ export function SkillNode({ data }: NodeProps) {
     >
       <span className={`absolute -top-4 left-2 text-sm font-mono text-gray-500 dark:text-nord-muted ${config.bg} border-2 ${config.border} px-1.5 py-0 rounded-t select-all leading-relaxed border-b-0`}>{node.id}</span>
       {node.assignee && (
-        <span className={`absolute -top-4 right-2 text-xs font-medium ${ASSIGNEE_STYLE[node.assignee]} border-2 px-1.5 py-0 rounded-t leading-relaxed border-b-0`}>
+        <span
+          className={
+            node.assignee === 'claude'
+              ? 'absolute -top-4 right-2 text-xs font-medium text-red-700 dark:text-nord-red bg-red-50 dark:bg-nord-red-tint border-red-300 dark:border-nord-red border-2 px-1.5 py-0 rounded-t leading-relaxed border-b-0'
+              : `absolute -top-4 right-2 text-xs font-medium ${config.text} ${config.bg} ${config.border} border-2 px-1.5 py-0 rounded-t leading-relaxed border-b-0`
+          }
+        >
           {ASSIGNEE_LABEL[node.assignee]}
         </span>
       )}
