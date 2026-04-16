@@ -36,13 +36,16 @@ function GraphPanelInner({ cardId, selectedNodeId, onSelectNode }: GraphPanelPro
 
   const layoutPassRef = useRef(0);
   const lastFitSignatureRef = useRef<string>('');
+  const selectedNodeIdRef = useRef(selectedNodeId);
+  selectedNodeIdRef.current = selectedNodeId;
 
+  // Heavy layout pipeline — only re-runs on structure/theme change, not on selection
   useEffect(() => {
     if (!data) return;
     const pass = ++layoutPassRef.current;
-    const { rfNodes, rfEdges } = toRFData(data.nodes, data.dependencies, dark, undefined, selectedNodeId);
+    const { rfNodes, rfEdges } = toRFData(data.nodes, data.dependencies, dark, undefined, selectedNodeIdRef.current);
 
-    // Only re-fit the viewport when the underlying graph structure changes (not on selection)
+    // Only re-fit the viewport when the underlying graph structure changes
     const signature = data.nodes.map((n) => n.id).sort().join(',') + '|' + data.dependencies.length;
     const shouldFit = signature !== lastFitSignatureRef.current;
     lastFitSignatureRef.current = signature;
@@ -75,7 +78,22 @@ function GraphPanelInner({ cardId, selectedNodeId, onSelectNode }: GraphPanelPro
         });
       });
     });
-  }, [data, dark, selectedNodeId, setNodes, setEdges, fitView]);
+  }, [data, dark, setNodes, setEdges, fitView]);
+
+  // Lightweight selection update — no layout recompute
+  useEffect(() => {
+    setNodes((prev) => {
+      if (prev.length === 0) return prev;
+      let changed = false;
+      const next = prev.map((n) => {
+        const shouldBeSelected = n.id === selectedNodeId;
+        if (n.data.isSelected === shouldBeSelected) return n;
+        changed = true;
+        return { ...n, data: { ...n.data, isSelected: shouldBeSelected } };
+      });
+      return changed ? next : prev;
+    });
+  }, [selectedNodeId, setNodes]);
 
   if (isLoading || !data || data.nodes.length === 0) {
     return (
