@@ -2,6 +2,7 @@
 
 export type ColumnType = 'backlog' | 'todo' | 'active' | 'done';
 export type NodeStatus = 'locked' | 'unlocked' | 'in_progress' | 'done';
+export type Assignee = 'ozan' | 'claude';
 
 // === Database Models ===
 
@@ -38,6 +39,9 @@ export interface TreeNode {
   notes: string;
   deadline: string | null;
   status: NodeStatus;
+  assignee: Assignee | null;
+  assignee_session_id: string | null;
+  assignee_cwd: string | null;
   position_x: number;
   position_y: number;
   created_at: string;
@@ -88,6 +92,9 @@ export interface UpdateNodePayload {
   notes?: string;
   deadline?: string | null;
   status?: NodeStatus;
+  assignee?: Assignee | null;
+  assignee_session_id?: string | null;
+  assignee_cwd?: string | null;
 }
 
 export interface AddDependencyPayload {

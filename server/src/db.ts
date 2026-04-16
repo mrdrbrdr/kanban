@@ -91,4 +91,14 @@ if ((db.pragma('user_version', { simple: true }) as number) < 2) {
   db.pragma('user_version = 2');
 }
 
+// Migration 3: track assignee on nodes (Ozan or a specific Claude session)
+if ((db.pragma('user_version', { simple: true }) as number) < 3) {
+  db.transaction(() => {
+    db.prepare(`ALTER TABLE nodes ADD COLUMN assignee TEXT`).run();
+    db.prepare(`ALTER TABLE nodes ADD COLUMN assignee_session_id TEXT`).run();
+    db.prepare(`ALTER TABLE nodes ADD COLUMN assignee_cwd TEXT`).run();
+    db.pragma('user_version = 3');
+  })();
+}
+
 export default db;

@@ -18,6 +18,9 @@
   --color-nord-yellow: #ebcb8b;
   --color-nord-yellow-tint: color-mix(in srgb, #ebcb8b 15%, #2e3440);
   --color-nord-purple: #b48ead;
+  --color-nord-purple-tint: color-mix(in srgb, #b48ead 15%, #2e3440);
+  --color-nord-orange: #d08770;
+  --color-nord-orange-tint: color-mix(in srgb, #d08770 15%, #2e3440);
 }
 
 body {

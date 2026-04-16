@@ -275,6 +275,29 @@ export function NodeDetail({ node, cardId, onClose, onDelete, allNodes, dependen
           />
         </div>
 
+        {node.assignee && (
+          <div>
+            <label className="block text-xs font-medium text-gray-500 dark:text-nord-muted mb-1">Assigned to</label>
+            <div className="text-sm text-gray-800 dark:text-nord-text capitalize">{node.assignee}</div>
+            {node.assignee === 'claude' && (
+              <div className="mt-1.5 space-y-1 text-xs">
+                {node.assignee_session_id && (
+                  <div className="flex gap-1.5">
+                    <span className="text-gray-400 dark:text-nord-muted shrink-0">Session:</span>
+                    <code className="font-mono text-gray-600 dark:text-nord-cyan break-all select-all">{node.assignee_session_id}</code>
+                  </div>
+                )}
+                {node.assignee_cwd && (
+                  <div className="flex gap-1.5">
+                    <span className="text-gray-400 dark:text-nord-muted shrink-0">CWD:</span>
+                    <code className="font-mono text-gray-600 dark:text-nord-cyan break-all select-all">{node.assignee_cwd}</code>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
         <div>
           <label className="block text-xs font-medium text-gray-500 dark:text-nord-muted mb-1">Description</label>
           <MarkdownField

@@ -42,7 +42,7 @@ router.post('/cards/:cardId/nodes', (req, res) => {
 // Update a node
 router.patch('/nodes/:id', (req, res) => {
   const { id } = req.params;
-  const { title, description, notes, deadline, status } = req.body;
+  const { title, description, notes, deadline, status, assignee, assignee_session_id, assignee_cwd } = req.body;
   const fields: string[] = [];
   const values: unknown[] = [];
 
@@ -50,7 +50,24 @@ router.patch('/nodes/:id', (req, res) => {
   if (description !== undefined) { fields.push('description = ?'); values.push(description); }
   if (notes !== undefined) { fields.push('notes = ?'); values.push(notes); }
   if (deadline !== undefined) { fields.push('deadline = ?'); values.push(deadline); }
-  if (status !== undefined) { fields.push('status = ?'); values.push(status); }
+
+  if (status !== undefined) {
+    fields.push('status = ?'); values.push(status);
+    if (status === 'in_progress') {
+      // Default assignee to 'ozan' when the UI just toggles Active without supplying one
+      fields.push('assignee = ?'); values.push(assignee ?? 'ozan');
+      fields.push('assignee_session_id = ?'); values.push(assignee_session_id ?? null);
+      fields.push('assignee_cwd = ?'); values.push(assignee_cwd ?? null);
+    } else {
+      fields.push('assignee = ?', 'assignee_session_id = ?', 'assignee_cwd = ?');
+      values.push(null, null, null);
+    }
+  } else {
+    // Allow reassignment without a status change
+    if (assignee !== undefined) { fields.push('assignee = ?'); values.push(assignee); }
+    if (assignee_session_id !== undefined) { fields.push('assignee_session_id = ?'); values.push(assignee_session_id); }
+    if (assignee_cwd !== undefined) { fields.push('assignee_cwd = ?'); values.push(assignee_cwd); }
+  }
 
   if (fields.length === 0) {
     res.status(400).json({ error: 'No fields to update' });
