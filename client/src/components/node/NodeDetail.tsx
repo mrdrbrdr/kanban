@@ -23,6 +23,7 @@ interface MarkdownFieldProps {
   value: string;
   onSave: (v: string) => void;
   placeholder?: string;
+  label?: string;
 }
 
 function autoSize(el: HTMLTextAreaElement): void {
@@ -30,7 +31,7 @@ function autoSize(el: HTMLTextAreaElement): void {
   el.style.height = el.scrollHeight + 'px';
 }
 
-function MarkdownField({ value, onSave, placeholder }: MarkdownFieldProps) {
+function MarkdownField({ value, onSave, placeholder, label }: MarkdownFieldProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState(value);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -59,31 +60,52 @@ function MarkdownField({ value, onSave, placeholder }: MarkdownFieldProps) {
     setIsEditing(false);
   }
 
-  if (isEditing) {
-    return (
-      <textarea
-        ref={textareaRef}
-        value={draft}
-        onChange={handleChange}
-        onBlur={handleBlur}
-        rows={1}
-        className="w-full px-2.5 py-1.5 text-sm border border-gray-200 dark:border-nord-border rounded bg-white dark:bg-nord-bg focus:outline-none focus:border-blue-400 dark:focus:border-nord-accent resize-none overflow-hidden font-mono"
-        placeholder={placeholder}
-      />
-    );
+  function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>): void {
+    if (e.key === 'Escape') {
+      e.stopPropagation();
+      textareaRef.current?.blur();
+    }
   }
 
   return (
-    <div
-      onClick={startEditing}
-      className="px-2.5 py-1.5 text-sm border border-transparent hover:border-gray-200 dark:hover:border-nord-border rounded cursor-text min-h-[2rem]"
-    >
-      {value ? (
-        <div className="prose prose-sm dark:prose-invert max-w-none prose-p:my-2 prose-headings:my-2 prose-ul:my-2 prose-ol:my-2 prose-li:my-0.5 prose-pre:my-2 prose-code:text-xs">
-          <Markdown remarkPlugins={[remarkGfm]}>{value}</Markdown>
+    <div>
+      {label && (
+        <div className="flex items-center gap-1.5 mb-1">
+          <span className="text-xs font-medium text-gray-500 dark:text-nord-muted">{label}</span>
+          {!isEditing && (
+            <button
+              onClick={startEditing}
+              className="text-gray-300 dark:text-nord-muted/50 hover:text-gray-500 dark:hover:text-nord-muted transition-colors"
+              title="Edit"
+            >
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 012.828 2.828L11.828 15.828a2 2 0 01-1.414.586H8v-2.414a2 2 0 01.586-1.414z" />
+              </svg>
+            </button>
+          )}
         </div>
+      )}
+      {isEditing ? (
+        <textarea
+          ref={textareaRef}
+          value={draft}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          onKeyDown={handleKeyDown}
+          rows={1}
+          className="w-full px-2.5 py-1.5 text-sm border border-gray-200 dark:border-nord-border rounded bg-white dark:bg-nord-bg focus:outline-none focus:border-blue-400 dark:focus:border-nord-accent resize-none overflow-hidden font-mono"
+          placeholder={placeholder}
+        />
       ) : (
-        <span className="text-gray-400 dark:text-nord-muted italic">{placeholder}</span>
+        <div className="px-2.5 py-1.5 text-sm border border-transparent rounded min-h-[2rem]">
+          {value ? (
+            <div className="prose prose-sm dark:prose-invert max-w-none prose-p:my-2 prose-headings:my-2 prose-ul:my-2 prose-ol:my-2 prose-li:my-0.5 prose-pre:my-2 prose-code:text-xs">
+              <Markdown remarkPlugins={[remarkGfm]}>{value}</Markdown>
+            </div>
+          ) : (
+            <span className="text-gray-400 dark:text-nord-muted italic">{placeholder}</span>
+          )}
+        </div>
       )}
     </div>
   );
@@ -331,9 +353,9 @@ export function NodeDetail({ node, cardId, onClose, onDelete, allNodes, dependen
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-gray-500 dark:text-nord-muted mb-1">Description</label>
           <MarkdownField
             key={`desc-${node.id}`}
+            label="Description"
             value={node.description}
             onSave={(v) => saveIfChanged('description', v)}
             placeholder="What needs to be done..."
@@ -341,9 +363,9 @@ export function NodeDetail({ node, cardId, onClose, onDelete, allNodes, dependen
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-gray-500 dark:text-nord-muted mb-1">Notes</label>
           <MarkdownField
             key={`notes-${node.id}`}
+            label="Notes"
             value={node.notes}
             onSave={(v) => saveIfChanged('notes', v)}
             placeholder="Additional notes..."
